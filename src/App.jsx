@@ -105,6 +105,123 @@ function BenchmarkTooltip({ benchmark }) {
   )
 }
 
+// Comparison component
+function ComparisonSection({ models }) {
+  const [selectedModelId, setSelectedModelId] = useState(models[0]?.id || null)
+  
+  const selectedModel = models.find(m => m.id === Number(selectedModelId)) || models[0]
+  
+  const calculateDifference = (model, selected, metric) => {
+    const val1 = model[metric]
+    const val2 = selected[metric]
+    const diff = val1 - val2
+    return {
+      value: val1,
+      diff: diff,
+      label: diff > 0 ? `+${diff.toFixed(1)}%` : diff < 0 ? `${diff.toFixed(1)}%` : '0%'
+    }
+  }
+  
+  const getDiffClass = (diff) => {
+    if (diff > 0) return 'positive-diff'
+    if (diff < 0) return 'negative-diff'
+    return 'neutral-diff'
+  }
+  
+  const getCostDifference = (model, selected, inputs, outputs) => {
+    const cost1 = (inputs * model.inputCost / 1000000) + (outputs * model.outputCost / 1000000)
+    const cost2 = (inputs * selected.inputCost / 1000000) + (outputs * selected.outputCost / 1000000)
+    const diff = cost1 - cost2
+    return {
+      value: cost1.toFixed(2),
+      diff: diff,
+      label: diff > 0 ? `+$${diff.toFixed(2)}` : diff < 0 ? `-$${Math.abs(diff).toFixed(2)}` : '$0.00'
+    }
+  }
+  
+  return (
+    <div className="table-section">
+      <h2>📊 Model Comparison</h2>
+      <p className="table-description">Select a model to compare all others against it.</p>
+      
+      <div className="comparison-selector" style={{ padding: '0 15px' }}>
+        <label>
+          <strong>Select model to compare:</strong>
+          <select 
+            value={selectedModelId || ''}
+            onChange={(e) => setSelectedModelId(Number(e.target.value))}
+          >
+            {models.map(model => (
+              <option key={model.id} value={model.id}>
+                {model.name}
+              </option>
+            ))}
+          </select>
+          <span className="comparison-badge">Selected: {selectedModel.name}</span>
+        </label>
+      </div>
+      
+      <div className="table-container">
+        <table className="model-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>MMLU</th>
+              <th>HellaSwag</th>
+              <th>HumanEval</th>
+              <th>GPQA</th>
+              <th>Est. Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            {models.map(model => {
+              const mmlu = calculateDifference(model, selectedModel, 'mmlu')
+              const hellaswag = calculateDifference(model, selectedModel, 'hellaswag')
+              const humaneval = calculateDifference(model, selectedModel, 'humaneval')
+              const gpqa = calculateDifference(model, selectedModel, 'gpqa')
+              const cost = getCostDifference(model, selectedModel, 1000000, 5000000)
+              
+              const isSelected = model.id === selectedModel.id
+              
+              return (
+                <tr key={model.id} style={{ background: isSelected ? 'rgba(103, 126, 234, 0.15)' : undefined }}>
+                  <td>
+                    <strong>{model.name}</strong>
+                    {isSelected && <span className="comparison-badge">BASELINE</span>}
+                    {model.openSource && <span style={{ marginLeft: '8px', background: '#9b59b6', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>OPEN SOURCE</span>}
+                  </td>
+                  <td>
+                    {mmlu.value}%
+                    {!isSelected && <span className={getDiffClass(mmlu.diff)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{mmlu.label}</span>}
+                  </td>
+                  <td>
+                    {hellaswag.value}%
+                    {!isSelected && <span className={getDiffClass(hellaswag.diff)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{hellaswag.label}</span>}
+                  </td>
+                  <td>
+                    {humaneval.value}%
+                    {!isSelected && <span className={getDiffClass(humaneval.diff)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{humaneval.label}</span>}
+                  </td>
+                  <td>
+                    {gpqa.value}%
+                    {!isSelected && <span className={getDiffClass(gpqa.diff)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{gpqa.label}</span>}
+                  </td>
+                  <td>
+                    <span className={model.free ? 'best-value' : ''}>
+                      ${cost.value}
+                    </span>
+                    {!isSelected && <span className={getDiffClass(cost.diff)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{cost.label}</span>}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 function App() {
   const [sortBy, setSortBy] = useState('mmlu')
   const [sortOrder, setSortOrder] = useState('desc')
@@ -293,6 +410,9 @@ function App() {
           </table>
         </div>
       </div>
+
+      {/* Comparison Section */}
+      <ComparisonSection models={filteredModels} />
 
       {/* Table 2: Qualitative Analysis */}
       <div className="table-section">
