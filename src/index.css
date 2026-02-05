@@ -226,32 +226,28 @@
 .tooltip-container {
   position: relative;
   display: inline-block;
+  cursor: help;
 }
 
 .tooltip-text {
   display: none;
-  position: absolute;
+  position: fixed;
   width: 280px;
-  max-width: 90vw;
+  max-width: 85vw;
   background: #1a1a2e;
   color: #ffffff;
   text-align: left;
   border-radius: 8px;
   padding: 10px 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(103, 126, 234, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(103, 126, 234, 0.6);
   font-size: 0.8em;
   font-weight: normal;
   line-height: 1.4;
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
-  z-index: 1000;
-  /* Position to the right of the element */
-  top: 50%;
-  transform: translateY(-50%);
-  left: 100%;
-  margin-left: 8px;
+  z-index: 10000;
 }
 
 .tooltip-container:hover .tooltip-text {
