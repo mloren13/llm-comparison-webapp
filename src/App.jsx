@@ -8,6 +8,18 @@ const benchmarkDescriptions = {
   GPQA: "Graduate-Level Google-Proof Q&A - Very hard science questions (graduate level). Tests expert-level knowledge. Higher = more expert-level understanding."
 }
 
+// Cost calculation explanation
+const costExplanation = "Estimated monthly cost = (Input tokens × Input price) + (Output tokens × Output price) ÷ 1,000,000. Adjust the token inputs in the filters above to calculate costs for your specific usage."
+
+// Task cost estimates (average tokens per task)
+const taskEstimates = {
+  "Quick Question": { input: 500, output: 1000 },
+  "Email Reply": { input: 2000, output: 3000 },
+  "Code Generation": { input: 3000, output: 5000 },
+  "Long Document": { input: 10000, output: 15000 },
+  "Complex Analysis": { input: 20000, output: 30000 }
+}
+
 // Model comparison data with qualitative info
 const models = [
   { 
@@ -96,16 +108,65 @@ const models = [
   },
 ]
 
-function BenchmarkTooltip({ benchmark }) {
+function Tooltip({ text, children }) {
   return (
-    <span className="benchmark-tooltip">
-      {benchmark}
-      <span className="tooltip-text">{benchmarkDescriptions[benchmark]}</span>
+    <span className="tooltip-container">
+      {children}
+      <span className="tooltip-text">{text}</span>
     </span>
   )
 }
 
-// Comparison component
+function CostBreakdownTable({ models }) {
+  const calculateTaskCost = (model, taskName) => {
+    const task = taskEstimates[taskName]
+    if (!task) return 0
+    const cost = (task.input * model.inputCost / 1000000) + (task.output * model.outputCost / 1000000)
+    return model.free ? 'FREE' : `$${cost.toFixed(4)}`
+  }
+  
+  return (
+    <div className="table-section">
+      <h2>💰 Cost Breakdown by Task</h2>
+      <p className="table-description">Estimated cost for different types of tasks based on average token usage.</p>
+      
+      <div className="table-container">
+        <table className="model-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              {Object.keys(taskEstimates).map(task => (
+                <th key={task}>{task}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {models.map(model => (
+              <tr key={model.id}>
+                <td>
+                  <strong>{model.name}</strong>
+                  {model.openSource && <span style={{ marginLeft: '8px', background: '#9b59b6', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>OPEN SOURCE</span>}
+                </td>
+                {Object.keys(taskEstimates).map(task => (
+                  <td key={task}>
+                    <span className={model.free ? 'best-value' : ''}>
+                      {calculateTaskCost(model, task)}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
+      <p className="table-description" style={{ marginTop: '15px', fontSize: '0.85em' }}>
+        💡 Task estimates are based on average token usage. Your actual costs may vary based on prompt length and response size.
+      </p>
+    </div>
+  )
+}
+
 function ComparisonSection({ models }) {
   const [selectedModelId, setSelectedModelId] = useState(models[0]?.id || null)
   
@@ -142,7 +203,7 @@ function ComparisonSection({ models }) {
   return (
     <div className="table-section">
       <h2>📊 Model Comparison</h2>
-      <p className="table-description">Select a model to compare all others against it.</p>
+      <p className="table-description">Select a model to compare all others against it. Shows percentage differences against the selected baseline.</p>
       
       <div className="comparison-selector" style={{ padding: '0 15px' }}>
         <label>
@@ -157,7 +218,7 @@ function ComparisonSection({ models }) {
               </option>
             ))}
           </select>
-          <span className="comparison-badge">Selected: {selectedModel.name}</span>
+          <span className="comparison-badge">Selected: {selectedModel?.name}</span>
         </label>
       </div>
       
@@ -166,11 +227,11 @@ function ComparisonSection({ models }) {
           <thead>
             <tr>
               <th>Model</th>
-              <th>MMLU</th>
-              <th>HellaSwag</th>
-              <th>HumanEval</th>
-              <th>GPQA</th>
-              <th>Est. Cost</th>
+              <th><Tooltip text={benchmarkDescriptions.MMLU}>MMLU</Tooltip></th>
+              <th><Tooltip text={benchmarkDescriptions.HellaSwag}>HellaSwag</Tooltip></th>
+              <th><Tooltip text={benchmarkDescriptions.HumanEval}>HumanEval</Tooltip></th>
+              <th><Tooltip text={benchmarkDescriptions.GPQA}>GPQA</Tooltip></th>
+              <th><Tooltip text={costExplanation}>Est. Cost</Tooltip></th>
             </tr>
           </thead>
           <tbody>
@@ -210,7 +271,7 @@ function ComparisonSection({ models }) {
                     <span className={model.free ? 'best-value' : ''}>
                       ${cost.value}
                     </span>
-                    {!isSelected && <span className={getDiffClass(cost.diff)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{cost.label}</span>}
+                    {!isSelected && <span className={getCostDifference(model, selectedModel, 1000000, 5000000).diff > 0 ? 'negative-diff' : getCostDifference(model, selectedModel, 1000000, 5000000).diff < 0 ? 'positive-diff' : 'neutral-diff'} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{cost.label}</span>}
                   </td>
                 </tr>
               )
@@ -349,7 +410,7 @@ function App() {
       {/* Table 1: Metrics & Costs */}
       <div className="table-section">
         <h2>📊 Performance Metrics & Costs</h2>
-        <p className="table-description">Click any benchmark header to learn what it tests. Hover to see detailed explanations.</p>
+        <p className="table-description">Click any column header to sort. Hover over headers to see what each benchmark tests.</p>
         
         <div className="table-container">
           <table className="model-table">
@@ -359,16 +420,16 @@ function App() {
                   Model {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
                 </th>
                 <th onClick={() => handleSort('mmlu')}>
-                  <BenchmarkTooltip benchmark="MMLU" /> {sortBy === 'mmlu' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  <Tooltip text={benchmarkDescriptions.MMLU}>MMLU</Tooltip> {sortBy === 'mmlu' && (sortOrder === 'asc' ? '↑' : '↓')}
                 </th>
                 <th onClick={() => handleSort('hellaswag')}>
-                  <BenchmarkTooltip benchmark="HellaSwag" /> {sortBy === 'hellaswag' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  <Tooltip text={benchmarkDescriptions.HellaSwag}>HellaSwag</Tooltip> {sortBy === 'hellaswag' && (sortOrder === 'asc' ? '↑' : '↓')}
                 </th>
                 <th onClick={() => handleSort('humaneval')}>
-                  <BenchmarkTooltip benchmark="HumanEval" /> {sortBy === 'humaneval' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  <Tooltip text={benchmarkDescriptions.HumanEval}>HumanEval</Tooltip> {sortBy === 'humaneval' && (sortOrder === 'asc' ? '↑' : '↓')}
                 </th>
                 <th onClick={() => handleSort('gpqa')}>
-                  <BenchmarkTooltip benchmark="GPQA" /> {sortBy === 'gpqa' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  <Tooltip text={benchmarkDescriptions.GPQA}>GPQA</Tooltip> {sortBy === 'gpqa' && (sortOrder === 'asc' ? '↑' : '↓')}
                 </th>
                 <th onClick={() => handleSort('inputCost')}>
                   Input ($/M) {sortBy === 'inputCost' && (sortOrder === 'asc' ? '↑' : '↓')}
@@ -377,7 +438,7 @@ function App() {
                   Output ($/M) {sortBy === 'outputCost' && (sortOrder === 'asc' ? '↑' : '↓')}
                 </th>
                 <th>
-                  Est. Cost
+                  <Tooltip text={costExplanation}>Est. Cost</Tooltip>
                 </th>
               </tr>
             </thead>
@@ -411,10 +472,13 @@ function App() {
         </div>
       </div>
 
+      {/* Cost Breakdown Table */}
+      <CostBreakdownTable models={filteredModels} />
+
       {/* Comparison Section */}
       <ComparisonSection models={filteredModels} />
 
-      {/* Table 2: Qualitative Analysis */}
+      {/* Qualitative Analysis Table */}
       <div className="table-section">
         <h2>📋 Qualitative Analysis</h2>
         <p className="table-description">Pros, cons, and recommended use cases for each model.</p>
