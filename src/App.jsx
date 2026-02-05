@@ -20,8 +20,8 @@ const taskEstimates = {
   "Complex Analysis": { input: 20000, output: 30000 }
 }
 
-// Context/tier categories with colors
-const contextOptions = {
+// Category/tier classifications with colors
+const categoryOptions = {
   "Flagship": { color: '#e74c3c', desc: "Top-tier models for enterprise and complex tasks" },
   "Balanced": { color: '#3498db', desc: "Good performance-to-cost ratio for general use" },
   "Budget": { color: '#27ae60', desc: "Cost-effective options for high-volume workloads" },
@@ -32,11 +32,30 @@ const contextOptions = {
   "Free Tier": { color: '#00bcd4', desc: "No-cost options with usage limits" }
 }
 
-// Active models with context
+// Context window sizes for each model
+const contextWindows = {
+  'Google Gemini 3 Flash': '1M tokens',
+  'Google Gemini 3 Pro': '2M tokens',
+  'DeepSeek V3.2': '128K tokens',
+  'Qwen3 Coder': '32K tokens',
+  'Mistral Devstral 25.12': '128K tokens',
+  'Mistral Codestral 25.08': '64K tokens',
+  'Moonshot AI Kimi K2.5': '200K tokens',
+  'Claude 3.5 Haiku': '200K tokens',
+  'xAI Grok 4.1 Fast': '131K tokens',
+  'Meta Llama 4 Maverick': '128K tokens',
+  'Meta Llama 4 Scout': '32K tokens',
+  'Qwen3 Thinking 30B': '32K tokens',
+  'MiniMax M2.1 (Free)': '200K tokens',
+  'MiniMax M2.1 (Paid)': '200K tokens',
+  'MiniMax Lightning': '64K tokens',
+}
+
+// Active models with category and context window
 const models = [
   { 
     id: 1, name: 'Google Gemini 3 Flash', mmlu: 82.4, hellaswag: 89.2, humaneval: 74.6, gpqa: 49.2, inputCost: 0.075, outputCost: 0.30, openSource: false,
-    free: false, context: "Balanced",
+    free: false, category: "Balanced", contextWindow: "1M tokens",
     pros: "Excellent value, large 1M context window, fast inference, strong vision capabilities",
     cons: "Rate limits on free tier, smaller than Pro version, may lack creativity",
     bestFor: "Production apps, image analysis, cost-sensitive projects",
@@ -44,7 +63,7 @@ const models = [
   },
   { 
     id: 2, name: 'Google Gemini 3 Pro', mmlu: 86.8, hellaswag: 91.5, humaneval: 78.4, gpqa: 54.8, inputCost: 1.25, outputCost: 5.00, openSource: false,
-    free: false, context: "Flagship",
+    free: false, category: "Flagship", contextWindow: "2M tokens",
     pros: "Best-in-class performance, massive 2M context window, excellent reasoning, top vision",
     cons: "Expensive, rate limits, overkill for simple tasks",
     bestFor: "Research, complex analysis, long documents, enterprise use",
@@ -52,7 +71,7 @@ const models = [
   },
   { 
     id: 3, name: 'DeepSeek V3.2', mmlu: 85.2, hellaswag: 90.8, humaneval: 82.6, gpqa: 52.4, inputCost: 0.14, outputCost: 0.28, openSource: false,
-    free: false, context: "Budget",
+    free: false, category: "Budget", contextWindow: "128K tokens",
     pros: "Outstanding coding performance, lowest per-token cost, strong reasoning, open API",
     cons: "Rate limits, Chinese company (data privacy concerns), inconsistent availability",
     bestFor: "Coding-heavy workloads, budget-conscious teams, high-volume apps",
@@ -60,7 +79,7 @@ const models = [
   },
   { 
     id: 4, name: 'Qwen3 Coder', mmlu: 83.6, hellaswag: 89.8, humaneval: 85.2, gpqa: 48.6, inputCost: 0.07, outputCost: 0.28, openSource: false,
-    free: false, context: "Specialized Coding",
+    free: false, category: "Specialized Coding", contextWindow: "32K tokens",
     pros: "Highest HumanEval score, excellent for code generation, very low cost, good debugging",
     cons: "Smaller model, weaker non-coding tasks, less reasoning depth",
     bestFor: "Code generation, refactoring, debugging, cost-optimized development",
@@ -68,7 +87,7 @@ const models = [
   },
   { 
     id: 5, name: 'Mistral Devstral 25.12', mmlu: 84.2, hellaswag: 90.2, humaneval: 80.4, gpqa: 51.8, inputCost: 0.30, outputCost: 0.90, openSource: false,
-    free: false, context: "Balanced",
+    free: false, category: "Balanced", contextWindow: "128K tokens",
     pros: "Strong balanced performance, European company (GDPR compliant), good reasoning",
     cons: "Less brand recognition, fewer integrations, mid-tier pricing",
     bestFor: "European projects, GDPR-sensitive applications, balanced workloads",
@@ -76,7 +95,7 @@ const models = [
   },
   { 
     id: 6, name: 'Mistral Codestral 25.08', mmlu: 82.8, hellaswag: 89.4, humaneval: 84.8, gpqa: 49.4, inputCost: 0.25, outputCost: 0.75, openSource: false,
-    free: false, context: "Specialized Coding",
+    free: false, category: "Specialized Coding", contextWindow: "64K tokens",
     pros: "Code-specialized, excellent code quality, good documentation, reliable outputs",
     cons: "Less versatile, weaker general reasoning, no vision capabilities",
     bestFor: "Code generation, refactoring, code review, technical docs",
@@ -84,7 +103,7 @@ const models = [
   },
   { 
     id: 7, name: 'Moonshot AI Kimi K2.5', mmlu: 85.8, hellaswag: 91.2, humaneval: 79.4, gpqa: 53.2, inputCost: 0.50, outputCost: 1.00, openSource: false,
-    free: false, context: "Balanced",
+    free: false, category: "Balanced", contextWindow: "200K tokens",
     pros: "Strong all-around, excellent reasoning, good coding, competitive performance",
     cons: "Asian market focus, less Western support, mid-range pricing",
     bestFor: "General-purpose AI, multilingual tasks, Asian market apps",
@@ -92,7 +111,7 @@ const models = [
   },
   { 
     id: 8, name: 'Claude 3.5 Haiku', mmlu: 84.6, hellaswag: 90.4, humaneval: 76.8, gpqa: 51.2, inputCost: 0.25, outputCost: 1.25, openSource: false,
-    free: false, context: "Conversational",
+    free: false, category: "Conversational", contextWindow: "200K tokens",
     pros: "Anthropic quality, fast responses, reliable outputs, good for conversation",
     cons: "Higher output costs, no free tier, may be verbose",
     bestFor: "Chatbots, conversation AI, quick queries, customer service",
@@ -100,7 +119,7 @@ const models = [
   },
   { 
     id: 9, name: 'xAI Grok 4.1 Fast', mmlu: 83.4, hellaswag: 89.6, humaneval: 75.4, gpqa: 50.4, inputCost: 0.15, outputCost: 0.60, openSource: false,
-    free: false, context: "Balanced",
+    free: false, category: "Balanced", contextWindow: "131K tokens",
     pros: "Good performance, xAI ecosystem, fast responses, X integration",
     cons: "Less established, smaller community, limited track record",
     bestFor: "xAI ecosystem projects, Twitter/X integration, fast reasoning",
@@ -108,7 +127,7 @@ const models = [
   },
   { 
     id: 10, name: 'Meta Llama 4 Maverick', mmlu: 82.6, hellaswag: 88.8, humaneval: 74.8, gpqa: 48.8, inputCost: 0.20, outputCost: 0.60, openSource: true,
-    free: false, context: "Open Source",
+    free: false, category: "Open Source", contextWindow: "128K tokens",
     pros: "Fully open-source, self-hostable, no API costs, customizable, privacy-focused",
     cons: "Requires technical setup, self-hosting costs, less polished than commercial",
     bestFor: "Self-hosting, privacy-sensitive apps, customization, research",
@@ -116,7 +135,7 @@ const models = [
   },
   { 
     id: 11, name: 'Meta Llama 4 Scout', mmlu: 78.4, hellaswag: 86.2, humaneval: 68.4, gpqa: 45.6, inputCost: 0.10, outputCost: 0.30, openSource: true,
-    free: false, context: "Open Source",
+    free: false, category: "Open Source", contextWindow: "32K tokens",
     pros: "Lightweight, fastest inference, fully open-source, lowest commercial cost",
     cons: "Lower performance, not for complex reasoning, requires optimization",
     bestFor: "Edge deployment, simple tasks, learning, hobby projects",
@@ -124,7 +143,7 @@ const models = [
   },
   { 
     id: 12, name: 'Qwen3 Thinking 30B', mmlu: 80.6, hellaswag: 88.4, humaneval: 71.2, gpqa: 47.8, inputCost: 0.10, outputCost: 0.40, openSource: false,
-    free: false, context: "Reasoning Focus",
+    free: false, category: "Reasoning Focus", contextWindow: "32K tokens",
     pros: "Reasoning-focused, step-by-step thinking, low cost, good for math/logic",
     cons: "Smaller model, slower due to thinking process, weaker coding",
     bestFor: "Math problems, logical reasoning, step-by-step analysis, tutoring",
@@ -132,7 +151,7 @@ const models = [
   },
   { 
     id: 13, name: 'MiniMax M2.1 (Free)', mmlu: 84.8, hellaswag: 90.6, humaneval: 80.2, gpqa: 52.6, inputCost: 0, outputCost: 0, openSource: false,
-    free: true, context: "Free Tier",
+    free: true, category: "Free Tier", contextWindow: "200K tokens",
     pros: "Completely free, excellent all-around performance, strong reasoning, great for development",
     cons: "Usage limits, rate limits, no commercial SLA, newer with limited track record",
     bestFor: "Personal projects, development, testing, learning, prototyping",
@@ -140,7 +159,7 @@ const models = [
   },
   { 
     id: 14, name: 'MiniMax M2.1 (Paid)', mmlu: 84.8, hellaswag: 90.6, humaneval: 80.2, gpqa: 52.6, inputCost: 0.50, outputCost: 1.00, openSource: false,
-    free: false, context: "Balanced",
+    free: false, category: "Balanced", contextWindow: "200K tokens",
     pros: "Same performance as free tier, unlimited usage, commercial use allowed, good support",
     cons: "Still newer than competitors, less established, pricing may change",
     bestFor: "Production apps, commercial use, unlimited usage needs",
@@ -148,7 +167,7 @@ const models = [
   },
   { 
     id: 15, name: 'MiniMax Lightning', mmlu: 82.2, hellaswag: 88.8, humaneval: 76.4, gpqa: 49.8, inputCost: 0, outputCost: 0, openSource: false,
-    free: true, context: "Free Tier",
+    free: true, category: "Free Tier", contextWindow: "64K tokens",
     pros: "Fastest option, free tier, good for simple quick tasks",
     cons: "Lower performance than standard M2.1, usage limits",
     bestFor: "Quick queries, high-volume simple tasks, prototyping",
@@ -202,8 +221,8 @@ function ComparisonSection({ models }) {
     return 'negative-diff'
   }
   
-  const getContextColor = (context) => {
-    return contextOptions[context]?.color || '#888'
+  const getCategoryColor = (category) => {
+    return categoryOptions[category]?.color || '#888'
   }
   
   return (
@@ -243,19 +262,20 @@ function ComparisonSection({ models }) {
         <table className="model-table">
           <thead>
             <tr>
-              <th style={{ width: '18%' }}>Model</th>
+              <th style={{ width: '16%' }}>Model</th>
               <th><Tooltip text={benchmarkDescriptions.MMLU}>MMLU</Tooltip></th>
               <th><Tooltip text={benchmarkDescriptions.HellaSwag}>HellaSwag</Tooltip></th>
               <th><Tooltip text={benchmarkDescriptions.HumanEval}>HumanEval</Tooltip></th>
               <th><Tooltip text={benchmarkDescriptions.GPQA}>GPQA</Tooltip></th>
-              <th>Context</th>
+              <th><Tooltip text="Maximum number of tokens the model can process in a single request">Context</Tooltip></th>
+              <th>Category</th>
               <th>Cost</th>
             </tr>
           </thead>
           <tbody>
             {models.map(model => {
               const isSelected = model.id === selectedModel.id
-              const contextColor = getContextColor(model.context)
+              const categoryColor = getCategoryColor(model.category)
               
               return (
                 <tr key={model.id} style={{ background: isSelected ? 'rgba(103, 126, 234, 0.15)' : undefined }}>
@@ -288,16 +308,19 @@ function ComparisonSection({ models }) {
                     </span>
                     {!isSelected && <span className={getPctClass((model.gpqa / selectedModel.gpqa) * 100)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{((model.gpqa / selectedModel.gpqa) * 100).toFixed(0)}%</span>}
                   </td>
+                  <td style={{ fontWeight: '500', color: '#f1c40f' }}>
+                    {model.contextWindow}
+                  </td>
                   <td>
                     <span style={{ 
-                      background: contextColor, 
+                      background: categoryColor, 
                       color: 'white', 
                       padding: '2px 8px', 
                       borderRadius: '8px', 
                       fontSize: '0.75em',
                       fontWeight: '600'
                     }}>
-                      {model.context}
+                      {model.category}
                     </span>
                   </td>
                   <td>
@@ -329,18 +352,18 @@ function CostBreakdownTable({ models }) {
     return { cost: (task.input * model.inputCost / 1000000) + (task.output * model.outputCost / 1000000), free: model.free }
   }
   
-  const getContextColor = (context) => contextOptions[context]?.color || '#888'
+  const getCategoryColor = (category) => categoryOptions[category]?.color || '#888'
   
   return (
     <div className="table-section">
       <h2>💰 Cost Breakdown by Task</h2>
-      <p className="table-description">Shows absolute cost and context for each model across different task types.</p>
+      <p className="table-description">Shows absolute cost for each model across different task types.</p>
       
       <div className="comparison-selector" style={{ padding: '0 15px', marginBottom: '15px' }}>
-        {Object.entries(contextOptions).map(([ctx, info]) => (
-          <span key={ctx} style={{ marginRight: '15px', fontSize: '0.85em' }}>
+        {Object.entries(categoryOptions).map(([cat, info]) => (
+          <span key={cat} style={{ marginRight: '15px', fontSize: '0.85em' }}>
             <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: info.color, marginRight: '5px' }}></span>
-            {ctx}
+            {cat}
           </span>
         ))}
       </div>
@@ -349,10 +372,11 @@ function CostBreakdownTable({ models }) {
         <table className="model-table">
           <thead>
             <tr>
-              <th style={{ width: '18%' }}>Model</th>
-              <th style={{ width: '12%' }}>Context</th>
+              <th style={{ width: '16%' }}>Model</th>
+              <th style={{ width: '10%' }}><Tooltip text="Maximum number of tokens the model can process">Context</Tooltip></th>
+              <th style={{ width: '10%' }}>Category</th>
               {Object.keys(taskEstimates).map(task => (
-                <th key={task} style={{ width: '14%' }}>
+                <th key={task} style={{ width: '12%' }}>
                   <Tooltip text={`Average tokens for ${task}: ${taskEstimates[task].input + taskEstimates[task].output} tokens`}>
                     {task}
                   </Tooltip>
@@ -362,7 +386,7 @@ function CostBreakdownTable({ models }) {
           </thead>
           <tbody>
             {models.map(model => {
-              const contextColor = getContextColor(model.context)
+              const categoryColor = getCategoryColor(model.category)
               
               return (
                 <tr key={model.id}>
@@ -370,9 +394,10 @@ function CostBreakdownTable({ models }) {
                     <strong>{model.name}</strong>
                     {model.free && <span style={{ marginLeft: '8px', background: '#11998e', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>FREE</span>}
                   </td>
+                  <td style={{ fontWeight: '500', color: '#f1c40f' }}>{model.contextWindow}</td>
                   <td>
-                    <span style={{ background: contextColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
-                      {model.context}
+                    <span style={{ background: categoryColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
+                      {model.category}
                     </span>
                   </td>
                   {Object.keys(taskEstimates).map(task => {
@@ -398,7 +423,7 @@ function CostBreakdownTable({ models }) {
 }
 
 function NotableMentions() {
-  const getContextColor = (context) => contextOptions[context]?.color || '#888'
+  const getCategoryColor = (category) => categoryOptions[category]?.color || '#888'
   
   return (
     <div className="table-section">
@@ -411,22 +436,22 @@ function NotableMentions() {
             <tr>
               <th style={{ width: '22%' }}>Model</th>
               <th style={{ width: '12%' }}>Provider</th>
-              <th style={{ width: '12%' }}>Context</th>
+              <th style={{ width: '12%' }}>Category</th>
               <th style={{ width: '12%' }}>Price</th>
               <th style={{ width: '42%' }}>Why Consider</th>
             </tr>
           </thead>
           <tbody>
             {notableModels.map((model, index) => {
-              const contextColor = getContextColor(model.context)
+              const categoryColor = getCategoryColor(model.category)
               
               return (
                 <tr key={index} style={{ opacity: 0.5 }}>
                   <td><strong>{model.name}</strong></td>
                   <td>{model.provider}</td>
                   <td>
-                    <span style={{ background: contextColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
-                      {model.context}
+                    <span style={{ background: categoryColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
+                      {model.category}
                     </span>
                   </td>
                   <td style={{ fontSize: '0.85em', color: '#aaa' }}>{model.price}</td>
@@ -482,7 +507,7 @@ function App() {
     }
   }
 
-  const getContextColor = (context) => contextOptions[context]?.color || '#888'
+  const getCategoryColor = (category) => categoryOptions[category]?.color || '#888'
 
   return (
     <div className="app">
@@ -550,14 +575,15 @@ function App() {
                 <th onClick={() => handleSort('hellaswag')}>HellaSwag {sortBy === 'hellaswag' && (sortOrder === 'asc' ? '↑' : '↓')}</th>
                 <th onClick={() => handleSort('humaneval')}>HumanEval {sortBy === 'humaneval' && (sortOrder === 'asc' ? '↑' : '↓')}</th>
                 <th onClick={() => handleSort('gpqa')}>GPQA {sortBy === 'gpqa' && (sortOrder === 'asc' ? '↑' : '↓')}</th>
-                <th>Context</th>
+                <th><Tooltip text="Maximum number of tokens the model can process">Context</Tooltip></th>
+                <th>Category</th>
                 <th>Input ($/M)</th>
                 <th>Output ($/M)</th>
               </tr>
             </thead>
             <tbody>
               {filteredModels.map(model => {
-                const contextColor = getContextColor(model.context)
+                const categoryColor = getCategoryColor(model.category)
                 return (
                   <tr key={model.id}>
                     <td>
@@ -569,9 +595,10 @@ function App() {
                     <td>{model.hellaswag}%</td>
                     <td>{model.humaneval}%</td>
                     <td>{model.gpqa}%</td>
+                    <td style={{ fontWeight: '500', color: '#f1c40f' }}>{model.contextWindow}</td>
                     <td>
-                      <span style={{ background: contextColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
-                        {model.context}
+                      <span style={{ background: categoryColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
+                        {model.category}
                       </span>
                     </td>
                     <td>${model.inputCost.toFixed(3)}</td>
