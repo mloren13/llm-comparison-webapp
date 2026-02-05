@@ -215,7 +215,7 @@
   font-weight: 600;
 }
 
-/* Tooltip Styles */
+/* Tooltip Styles - FIXED */
 .tooltip-container {
   position: relative;
   display: inline-block;
@@ -226,26 +226,24 @@
 .tooltip-text {
   visibility: hidden;
   width: 320px;
+  max-width: 90vw;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  color: #e0e0e0;
+  color: #ffffff;
   text-align: left;
   border-radius: 10px;
   padding: 12px 15px;
   position: fixed;
   z-index: 9999;
-  bottom: auto;
-  top: auto;
-  left: auto;
-  right: auto;
-  transform: none;
   opacity: 0;
   transition: opacity 0.3s ease;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(103, 126, 234, 0.5);
-  font-size: 0.85em;
-  font-weight: normal;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  border: 2px solid rgba(102, 126, 234, 0.6);
+  font-size: 0.9em;
+  font-weight: 500;
   line-height: 1.5;
   pointer-events: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .tooltip-container:hover .tooltip-text {
@@ -265,18 +263,20 @@
 
 .comparison-selector select {
   padding: 12px 15px;
-  border: 2px solid #3a3a5a;
-  border-radius: 10px;
   font-size: 1em;
-  background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.8) 100%);
-  color: #e0e0e0;
+  font-weight: 600;
+  color: #1a1a2e;
+  background: #ffffff;
+  border: 2px solid #667eea;
+  border-radius: 10px;
   cursor: pointer;
   margin-left: 15px;
 }
 
 .comparison-selector select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #764ba2;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
 }
 
 /* Comparison Badge */
@@ -287,6 +287,7 @@
   border-radius: 5px;
   font-size: 0.75em;
   margin-left: 10px;
+  font-weight: 600;
 }
 
 .positive-diff {
@@ -300,7 +301,8 @@
 }
 
 .neutral-diff {
-  color: #888;
+  color: #f1c40f;
+  font-weight: 600;
 }
 
 /* Footer */
@@ -380,7 +382,9 @@
   
   .tooltip-text {
     width: 280px;
-    font-size: 0.8em;
+    max-width: 85vw;
+    font-size: 0.85em;
+    padding: 10px 12px;
   }
   
   .comparison-selector select {

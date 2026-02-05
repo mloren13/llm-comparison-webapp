@@ -117,56 +117,6 @@ function Tooltip({ text, children }) {
   )
 }
 
-function CostBreakdownTable({ models }) {
-  const calculateTaskCost = (model, taskName) => {
-    const task = taskEstimates[taskName]
-    if (!task) return 0
-    const cost = (task.input * model.inputCost / 1000000) + (task.output * model.outputCost / 1000000)
-    return model.free ? 'FREE' : `$${cost.toFixed(4)}`
-  }
-  
-  return (
-    <div className="table-section">
-      <h2>💰 Cost Breakdown by Task</h2>
-      <p className="table-description">Estimated cost for different types of tasks based on average token usage.</p>
-      
-      <div className="table-container">
-        <table className="model-table">
-          <thead>
-            <tr>
-              <th>Model</th>
-              {Object.keys(taskEstimates).map(task => (
-                <th key={task}>{task}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {models.map(model => (
-              <tr key={model.id}>
-                <td>
-                  <strong>{model.name}</strong>
-                  {model.openSource && <span style={{ marginLeft: '8px', background: '#9b59b6', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>OPEN SOURCE</span>}
-                </td>
-                {Object.keys(taskEstimates).map(task => (
-                  <td key={task}>
-                    <span className={model.free ? 'best-value' : ''}>
-                      {calculateTaskCost(model, task)}
-                    </span>
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
-      <p className="table-description" style={{ marginTop: '15px', fontSize: '0.85em' }}>
-        💡 Task estimates are based on average token usage. Your actual costs may vary based on prompt length and response size.
-      </p>
-    </div>
-  )
-}
-
 function ComparisonSection({ models }) {
   const [selectedModelId, setSelectedModelId] = useState(models[0]?.id || null)
   
@@ -213,9 +163,20 @@ function ComparisonSection({ models }) {
           <select 
             value={selectedModelId || ''}
             onChange={(e) => setSelectedModelId(Number(e.target.value))}
+            style={{ 
+              marginLeft: '10px', 
+              padding: '10px 15px', 
+              fontSize: '1em',
+              fontWeight: '600',
+              color: '#1a1a2e',
+              background: '#ffffff',
+              border: '2px solid #667eea',
+              borderRadius: '10px',
+              cursor: 'pointer'
+            }}
           >
             {models.map(model => (
-              <option key={model.id} value={model.id}>
+              <option key={model.id} value={model.id} style={{ fontWeight: '600', color: '#1a1a2e' }}>
                 {model.name}
               </option>
             ))}
@@ -233,7 +194,7 @@ function ComparisonSection({ models }) {
               <th><Tooltip text={benchmarkDescriptions.HellaSwag}>HellaSwag</Tooltip></th>
               <th><Tooltip text={benchmarkDescriptions.HumanEval}>HumanEval</Tooltip></th>
               <th><Tooltip text={benchmarkDescriptions.GPQA}>GPQA</Tooltip></th>
-              <th><Tooltip text={costExplanation}>Cost %</Tooltip></th>
+              <th><Tooltip text={costExplanation}>Cost</Tooltip></th>
             </tr>
           </thead>
           <tbody>
@@ -254,23 +215,31 @@ function ComparisonSection({ models }) {
                     {model.openSource && <span style={{ marginLeft: '8px', background: '#9b59b6', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>OPEN SOURCE</span>}
                   </td>
                   <td>
-                    {mmlu.value}%
-                    {!isSelected && <span className={getPctClass(mmlu.pct)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{mmlu.label}</span>}
+                    <span style={{ fontWeight: isSelected ? '600' : '400', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
+                      {mmlu.value}%
+                    </span>
+                    {!isSelected && <span className={getPctClass(mmlu.pct)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{mmlu.label}</span>}
                   </td>
                   <td>
-                    {hellaswag.value}%
-                    {!isSelected && <span className={getPctClass(hellaswag.pct)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{hellaswag.label}</span>}
+                    <span style={{ fontWeight: isSelected ? '600' : '400', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
+                      {hellaswag.value}%
+                    </span>
+                    {!isSelected && <span className={getPctClass(hellaswag.pct)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{hellaswag.label}</span>}
                   </td>
                   <td>
-                    {humaneval.value}%
-                    {!isSelected && <span className={getPctClass(humaneval.pct)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{humaneval.label}</span>}
+                    <span style={{ fontWeight: isSelected ? '600' : '400', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
+                      {humaneval.value}%
+                    </span>
+                    {!isSelected && <span className={getPctClass(humaneval.pct)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{humaneval.label}</span>}
                   </td>
                   <td>
-                    {gpqa.value}%
-                    {!isSelected && <span className={getPctClass(gpqa.pct)} style={{ marginLeft: '8px', fontSize: '0.85em' }}>{gpqa.label}</span>}
+                    <span style={{ fontWeight: isSelected ? '600' : '400', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
+                      {gpqa.value}%
+                    </span>
+                    {!isSelected && <span className={getPctClass(gpqa.pct)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{gpqa.label}</span>}
                   </td>
                   <td>
-                    <span className={model.free ? 'best-value' : getPctClass(cost.pct)}>
+                    <span className={model.free ? 'best-value' : getPctClass(cost.pct)} style={{ fontWeight: '600' }}>
                       {cost.label}
                     </span>
                     {!isSelected && !model.free && <span style={{ marginLeft: '8px', fontSize: '0.85em', color: '#888' }}>${cost.value}</span>}
@@ -283,11 +252,133 @@ function ComparisonSection({ models }) {
       </div>
       
       <p className="table-description" style={{ marginTop: '15px', fontSize: '0.85em' }}>
-        💡 How to read: If baseline has 80% MMLU and another model shows 95%, that model achieves 95% of the baseline's performance (76% actual score).
+        💡 How to read: If baseline has 80% MMLU and another model shows 95%, that model achieves 95% of the baseline's performance.
       </p>
     </div>
   )
 }
+
+function CostBreakdownTable({ models }) {
+  const [selectedModelId, setSelectedModelId] = useState(models[0]?.id || null)
+  
+  const selectedModel = models.find(m => m.id === Number(selectedModelId)) || models[0]
+  
+  const calculateTaskCost = (model, taskName) => {
+    const task = taskEstimates[taskName]
+    if (!task) return { cost: 0, pct: 0 }
+    const cost = (task.input * model.inputCost / 1000000) + (task.output * model.outputCost / 1000000)
+    return { cost: cost, free: model.free }
+  }
+  
+  const calculatePercentage = (model, selected, taskName) => {
+    const task = taskEstimates[taskName]
+    if (!task) return 0
+    const cost1 = (task.input * model.inputCost / 1000000) + (task.output * model.outputCost / 1000000)
+    const cost2 = (task.input * selected.inputCost / 1000000) + (task.output * selected.outputCost / 1000000)
+    if (cost2 === 0) return model.free ? 0 : 100
+    return (cost1 / cost2) * 100
+  }
+  
+  const getPctClass = (pct) => {
+    if (pct <= 100) return 'positive-diff'
+    if (pct <= 110) return 'neutral-diff'
+    return 'negative-diff'
+  }
+  
+  return (
+    <div className="table-section">
+      <h2>💰 Cost Breakdown by Task (% of Baseline)</h2>
+      <p className="table-description">Select a baseline model. Shows absolute cost and percentage relative to baseline for each task type.</p>
+      
+      <div className="comparison-selector" style={{ padding: '0 15px' }}>
+        <label>
+          <strong>Select baseline model:</strong>
+          <select 
+            value={selectedModelId || ''}
+            onChange={(e) => setSelectedModelId(Number(e.target.value))}
+            style={{ 
+              marginLeft: '10px', 
+              padding: '10px 15px', 
+              fontSize: '1em',
+              fontWeight: '600',
+              color: '#1a1a2e',
+              background: '#ffffff',
+              border: '2px solid #667eea',
+              borderRadius: '10px',
+              cursor: 'pointer'
+            }}
+          >
+            {models.map(model => (
+              <option key={model.id} value={model.id} style={{ fontWeight: '600', color: '#1a1a2e' }}>
+                {model.name}
+              </option>
+            ))}
+          </select>
+          <span className="comparison-badge">Baseline: {selectedModel?.name}</span>
+        </label>
+      </div>
+      
+      <div className="table-container">
+        <table className="model-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              {Object.keys(taskEstimates).map(task => (
+                <th key={task}>
+                  {task}
+                  <div style={{ fontSize: '0.75em', fontWeight: 'normal', marginTop: '2px' }}>
+                    ~{(taskEstimates[task].input + taskEstimates[task].output).toLocaleString()} tokens
+                  </div>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {models.map(model => {
+              const isSelected = model.id === selectedModel.id
+              
+              return (
+                <tr key={model.id} style={{ background: isSelected ? 'rgba(103, 126, 234, 0.15)' : undefined }}>
+                  <td>
+                    <strong>{model.name}</strong>
+                    {isSelected && <span className="comparison-badge">BASELINE</span>}
+                    {model.openSource && <span style={{ marginLeft: '8px', background: '#9b59b6', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>OPEN SOURCE</span>}
+                  </td>
+                  {Object.keys(taskEstimates).map(task => {
+                    const { cost, free } = calculateTaskCost(model, task)
+                    const pct = calculatePercentage(model, selectedModel, task)
+                    
+                    return (
+                      <td key={task}>
+                        {free ? (
+                          <span className="best-value" style={{ fontWeight: '600' }}>FREE</span>
+                        ) : (
+                          <>
+                            <span style={{ fontWeight: '600', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
+                              ${cost.toFixed(4)}
+                            </span>
+                            {!isSelected && (
+                              <span className={getPctClass(pct)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>
+                                {pct.toFixed(0)}%
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      
+      <p className="table-description" style={{ marginTop: '15px', fontSize: '0.85em' }}>
+        💡 How to read: If baseline shows $0.01 and another model shows $0.005 with 50%, that model costs 50% as much (half the price).
+      </p>
+    </div>
+  )
 }
 
 function App() {
@@ -414,7 +505,13 @@ function App() {
         </div>
       </div>
 
-      {/* Table 1: Metrics & Costs */}
+      {/* FIRST TABLE: Comparison Section */}
+      <ComparisonSection models={filteredModels} />
+
+      {/* Cost Breakdown Table */}
+      <CostBreakdownTable models={filteredModels} />
+
+      {/* Table: Performance Metrics & Costs */}
       <div className="table-section">
         <h2>📊 Performance Metrics & Costs</h2>
         <p className="table-description">Click any column header to sort. Hover over headers to see what each benchmark tests.</p>
@@ -478,12 +575,6 @@ function App() {
           </table>
         </div>
       </div>
-
-      {/* Cost Breakdown Table */}
-      <CostBreakdownTable models={filteredModels} />
-
-      {/* Comparison Section */}
-      <ComparisonSection models={filteredModels} />
 
       {/* Qualitative Analysis Table */}
       <div className="table-section">
