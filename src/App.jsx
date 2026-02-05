@@ -9,7 +9,7 @@ const benchmarkDescriptions = {
 }
 
 // Cost calculation explanation
-const costExplanation = "Estimated monthly cost = (Input tokens × Input price) + (Output tokens × Output price) ÷ 1,000,000. Adjust the token inputs in the filters above to calculate costs for your specific usage."
+const costExplanation = "Estimated monthly cost = (Input tokens × Input price) + (Output tokens × Output price) ÷ 1,000,000"
 
 // Task cost estimates (average tokens per task)
 const taskEstimates = {
@@ -32,166 +32,192 @@ const categoryOptions = {
   "Free Tier": { color: '#00bcd4', desc: "No-cost options with usage limits" }
 }
 
-// Context window sizes for each model
-const contextWindows = {
-  'Google Gemini 3 Flash': '1M tokens',
-  'Google Gemini 3 Pro': '2M tokens',
-  'DeepSeek V3.2': '128K tokens',
-  'Qwen3 Coder': '32K tokens',
-  'Mistral Devstral 25.12': '128K tokens',
-  'Mistral Codestral 25.08': '64K tokens',
-  'Moonshot AI Kimi K2.5': '200K tokens',
-  'Claude 3.5 Haiku': '200K tokens',
-  'xAI Grok 4.1 Fast': '131K tokens',
-  'Meta Llama 4 Maverick': '128K tokens',
-  'Meta Llama 4 Scout': '32K tokens',
-  'Qwen3 Thinking 30B': '32K tokens',
-  'MiniMax M2.1 (Free)': '200K tokens',
-  'MiniMax M2.1 (Paid)': '200K tokens',
-  'MiniMax Lightning': '64K tokens',
-}
-
 // Active models with category and context window
 const models = [
   { 
     id: 1, name: 'Google Gemini 3 Flash', mmlu: 82.4, hellaswag: 89.2, humaneval: 74.6, gpqa: 49.2, inputCost: 0.075, outputCost: 0.30, openSource: false,
-    free: false, category: "Balanced", contextWindow: "1M tokens",
+    free: false, category: "Balanced", contextWindow: "1M",
     pros: "Excellent value, large 1M context window, fast inference, strong vision capabilities",
     cons: "Rate limits on free tier, smaller than Pro version, may lack creativity",
     bestFor: "Production apps, image analysis, cost-sensitive projects",
-    priceNote: "Best cost-performance ratio for production use"
+    priceNote: "Best cost-performance ratio"
   },
   { 
     id: 2, name: 'Google Gemini 3 Pro', mmlu: 86.8, hellaswag: 91.5, humaneval: 78.4, gpqa: 54.8, inputCost: 1.25, outputCost: 5.00, openSource: false,
-    free: false, category: "Flagship", contextWindow: "2M tokens",
+    free: false, category: "Flagship", contextWindow: "2M",
     pros: "Best-in-class performance, massive 2M context window, excellent reasoning, top vision",
     cons: "Expensive, rate limits, overkill for simple tasks",
     bestFor: "Research, complex analysis, long documents, enterprise use",
-    priceNote: "Premium pricing for premium performance"
+    priceNote: "Premium pricing"
   },
   { 
     id: 3, name: 'DeepSeek V3.2', mmlu: 85.2, hellaswag: 90.8, humaneval: 82.6, gpqa: 52.4, inputCost: 0.14, outputCost: 0.28, openSource: false,
-    free: false, category: "Budget", contextWindow: "128K tokens",
+    free: false, category: "Budget", contextWindow: "128K",
     pros: "Outstanding coding performance, lowest per-token cost, strong reasoning, open API",
     cons: "Rate limits, Chinese company (data privacy concerns), inconsistent availability",
     bestFor: "Coding-heavy workloads, budget-conscious teams, high-volume apps",
-    priceNote: "Best value for coding tasks, 50-80% cheaper than US alternatives"
+    priceNote: "50-80% cheaper than US alternatives"
   },
   { 
     id: 4, name: 'Qwen3 Coder', mmlu: 83.6, hellaswag: 89.8, humaneval: 85.2, gpqa: 48.6, inputCost: 0.07, outputCost: 0.28, openSource: false,
-    free: false, category: "Specialized Coding", contextWindow: "32K tokens",
+    free: false, category: "Specialized Coding", contextWindow: "32K",
     pros: "Highest HumanEval score, excellent for code generation, very low cost, good debugging",
     cons: "Smaller model, weaker non-coding tasks, less reasoning depth",
     bestFor: "Code generation, refactoring, debugging, cost-optimized development",
-    priceNote: "Cheapest option for pure coding, great for dev tools"
+    priceNote: "Cheapest for pure coding"
   },
   { 
     id: 5, name: 'Mistral Devstral 25.12', mmlu: 84.2, hellaswag: 90.2, humaneval: 80.4, gpqa: 51.8, inputCost: 0.30, outputCost: 0.90, openSource: false,
-    free: false, category: "Balanced", contextWindow: "128K tokens",
+    free: false, category: "Balanced", contextWindow: "128K",
     pros: "Strong balanced performance, European company (GDPR compliant), good reasoning",
     cons: "Less brand recognition, fewer integrations, mid-tier pricing",
     bestFor: "European projects, GDPR-sensitive applications, balanced workloads",
-    priceNote: "Middle-ground pricing with EU compliance benefit"
+    priceNote: "EU compliance benefit"
   },
   { 
     id: 6, name: 'Mistral Codestral 25.08', mmlu: 82.8, hellaswag: 89.4, humaneval: 84.8, gpqa: 49.4, inputCost: 0.25, outputCost: 0.75, openSource: false,
-    free: false, category: "Specialized Coding", contextWindow: "64K tokens",
+    free: false, category: "Specialized Coding", contextWindow: "64K",
     pros: "Code-specialized, excellent code quality, good documentation, reliable outputs",
     cons: "Less versatile, weaker general reasoning, no vision capabilities",
     bestFor: "Code generation, refactoring, code review, technical docs",
-    priceNote: "Specialized for code, reasonable pricing for its niche"
+    priceNote: "Reasonable for code niche"
   },
   { 
     id: 7, name: 'Moonshot AI Kimi K2.5', mmlu: 85.8, hellaswag: 91.2, humaneval: 79.4, gpqa: 53.2, inputCost: 0.50, outputCost: 1.00, openSource: false,
-    free: false, category: "Balanced", contextWindow: "200K tokens",
+    free: false, category: "Balanced", contextWindow: "200K",
     pros: "Strong all-around, excellent reasoning, good coding, competitive performance",
     cons: "Asian market focus, less Western support, mid-range pricing",
     bestFor: "General-purpose AI, multilingual tasks, Asian market apps",
-    priceNote: "Competitive mid-tier, good for mixed workloads"
+    priceNote: "Good for mixed workloads"
   },
   { 
     id: 8, name: 'Claude 3.5 Haiku', mmlu: 84.6, hellaswag: 90.4, humaneval: 76.8, gpqa: 51.2, inputCost: 0.25, outputCost: 1.25, openSource: false,
-    free: false, category: "Conversational", contextWindow: "200K tokens",
+    free: false, category: "Conversational", contextWindow: "200K",
     pros: "Anthropic quality, fast responses, reliable outputs, good for conversation",
     cons: "Higher output costs, no free tier, may be verbose",
     bestFor: "Chatbots, conversation AI, quick queries, customer service",
-    priceNote: "Higher output cost but excellent for conversational AI"
+    priceNote: "Higher output cost"
   },
   { 
     id: 9, name: 'xAI Grok 4.1 Fast', mmlu: 83.4, hellaswag: 89.6, humaneval: 75.4, gpqa: 50.4, inputCost: 0.15, outputCost: 0.60, openSource: false,
-    free: false, category: "Balanced", contextWindow: "131K tokens",
+    free: false, category: "Balanced", contextWindow: "131K",
     pros: "Good performance, xAI ecosystem, fast responses, X integration",
     cons: "Less established, smaller community, limited track record",
     bestFor: "xAI ecosystem projects, Twitter/X integration, fast reasoning",
-    priceNote: "Mid-range pricing with ecosystem benefits"
+    priceNote: "Mid-range pricing"
   },
   { 
     id: 10, name: 'Meta Llama 4 Maverick', mmlu: 82.6, hellaswag: 88.8, humaneval: 74.8, gpqa: 48.8, inputCost: 0.20, outputCost: 0.60, openSource: true,
-    free: false, category: "Open Source", contextWindow: "128K tokens",
+    free: false, category: "Open Source", contextWindow: "128K",
     pros: "Fully open-source, self-hostable, no API costs, customizable, privacy-focused",
     cons: "Requires technical setup, self-hosting costs, less polished than commercial",
     bestFor: "Self-hosting, privacy-sensitive apps, customization, research",
-    priceNote: "Free to use but requires hosting/infrastructure costs"
+    priceNote: "Free to use (hosting costs apply)"
   },
   { 
     id: 11, name: 'Meta Llama 4 Scout', mmlu: 78.4, hellaswag: 86.2, humaneval: 68.4, gpqa: 45.6, inputCost: 0.10, outputCost: 0.30, openSource: true,
-    free: false, category: "Open Source", contextWindow: "32K tokens",
+    free: false, category: "Open Source", contextWindow: "32K",
     pros: "Lightweight, fastest inference, fully open-source, lowest commercial cost",
     cons: "Lower performance, not for complex reasoning, requires optimization",
     bestFor: "Edge deployment, simple tasks, learning, hobby projects",
-    priceNote: "Cheapest commercial API + open-source option"
+    priceNote: "Cheapest commercial + open-source"
   },
   { 
     id: 12, name: 'Qwen3 Thinking 30B', mmlu: 80.6, hellaswag: 88.4, humaneval: 71.2, gpqa: 47.8, inputCost: 0.10, outputCost: 0.40, openSource: false,
-    free: false, category: "Reasoning Focus", contextWindow: "32K tokens",
+    free: false, category: "Reasoning Focus", contextWindow: "32K",
     pros: "Reasoning-focused, step-by-step thinking, low cost, good for math/logic",
     cons: "Smaller model, slower due to thinking process, weaker coding",
     bestFor: "Math problems, logical reasoning, step-by-step analysis, tutoring",
-    priceNote: "Low cost for reasoning-heavy tasks"
+    priceNote: "Low cost for reasoning"
   },
   { 
     id: 13, name: 'MiniMax M2.1 (Free)', mmlu: 84.8, hellaswag: 90.6, humaneval: 80.2, gpqa: 52.6, inputCost: 0, outputCost: 0, openSource: false,
-    free: true, category: "Free Tier", contextWindow: "200K tokens",
+    free: true, category: "Free Tier", contextWindow: "200K",
     pros: "Completely free, excellent all-around performance, strong reasoning, great for development",
     cons: "Usage limits, rate limits, no commercial SLA, newer with limited track record",
     bestFor: "Personal projects, development, testing, learning, prototyping",
-    priceNote: "FREE with subscription (limits apply)"
+    priceNote: "FREE (with limits)"
   },
   { 
     id: 14, name: 'MiniMax M2.1 (Paid)', mmlu: 84.8, hellaswag: 90.6, humaneval: 80.2, gpqa: 52.6, inputCost: 0.50, outputCost: 1.00, openSource: false,
-    free: false, category: "Balanced", contextWindow: "200K tokens",
+    free: false, category: "Balanced", contextWindow: "200K",
     pros: "Same performance as free tier, unlimited usage, commercial use allowed, good support",
     cons: "Still newer than competitors, less established, pricing may change",
     bestFor: "Production apps, commercial use, unlimited usage needs",
-    priceNote: "Reasonable paid tier, similar to Moonshot pricing"
+    priceNote: "Reasonable paid tier"
   },
   { 
     id: 15, name: 'MiniMax Lightning', mmlu: 82.2, hellaswag: 88.8, humaneval: 76.4, gpqa: 49.8, inputCost: 0, outputCost: 0, openSource: false,
-    free: true, category: "Free Tier", contextWindow: "64K tokens",
+    free: true, category: "Free Tier", contextWindow: "64K",
     pros: "Fastest option, free tier, good for simple quick tasks",
     cons: "Lower performance than standard M2.1, usage limits",
     bestFor: "Quick queries, high-volume simple tasks, prototyping",
-    priceNote: "FREE with subscription - fastest option"
+    priceNote: "FREE (fastest option)"
   },
 ]
 
-// Notable mentions (disabled models)
+// Notable mentions (disabled models) with full details
 const notableModels = [
-  { name: 'Claude 3.7 Sonnet', provider: 'Anthropic', context: 'Flagship', price: '$3/$15', reason: "Anthropic's top model, excellent for complex reasoning and coding" },
-  { name: 'Claude 3.5 Sonnet', provider: 'Anthropic', context: 'Flagship', price: '$3/$15', reason: "Former flagship, excellent balance of capability and speed" },
-  { name: 'GPT-4 Turbo', provider: 'OpenAI', context: 'Flagship', price: '$10/$30', reason: "OpenAI's top model, excellent reasoning and tool use" },
-  { name: 'GPT-4o', provider: 'OpenAI', context: 'Flagship', price: '$5/$15', reason: "Omni model with excellent vision and audio capabilities" },
-  { name: 'GPT-3.5 Turbo', provider: 'OpenAI', context: 'Budget', price: '$0.50/$1.50', reason: "Inexpensive option for simple tasks and high-volume workloads" },
-  { name: 'DeepSeek Chat', provider: 'DeepSeek', context: 'Budget', price: '$0.14/$0.28', reason: "Chat-focused version of DeepSeek, great value" },
-  { name: 'Qwen 2.5', provider: 'Alibaba', context: 'Budget', price: '$0.07/$0.14', reason: "Extremely low cost, good for simple tasks" },
-  { name: 'CodeLlama 70B', provider: 'Meta', context: 'Specialized Coding', price: 'Open Source', reason: "Meta's code-specialized model, fully open-source" },
-  { name: 'StarCoder 2', provider: 'BigCode', context: 'Specialized Coding', price: 'Open Source', reason: "Open-source code model, trained on 300+ languages" },
-  { name: 'WizardMath', provider: 'Microsoft', context: 'Reasoning Focus', price: 'Open Source', reason: "Math-specialized open-source model" },
-  { name: 'Llama 3.1 Instruct', provider: 'Meta', context: 'Conversational', price: 'Open Source', reason: "Meta's instruction-tuned model, excellent for chat" },
-  { name: 'Gemma 2', provider: 'Google', context: 'Conversational', price: 'Open Source', reason: "Google's lightweight open-source chat model" },
-  { name: 'Command R+', provider: 'Cohere', context: 'Flagship', price: '$0.50/$2.00', reason: "Enterprise-focused, excellent RAG capabilities" },
-  { name: 'Azure AI', provider: 'Microsoft', context: 'Enterprise', price: 'Varies', reason: "Enterprise deployment with Microsoft integration" },
-  { name: 'Amazon Titan', provider: 'AWS', context: 'Enterprise', price: 'Varies', reason: "AWS's integrated AI service for enterprise" },
+  { name: 'Claude 3.7 Sonnet', provider: 'Anthropic', category: "Flagship", contextWindow: "200K", price: '$3/$15',
+    pros: "Anthropic's top model, excellent complex reasoning and coding capabilities",
+    cons: "Expensive, rate limits, no vision capabilities",
+    bestFor: "Enterprise research, complex analysis, coding at scale" },
+  { name: 'Claude 3.5 Sonnet', provider: 'Anthropic', category: "Flagship", contextWindow: "200K", price: '$3/$15',
+    pros: "Excellent balance of capability and speed, strong reasoning",
+    cons: "Still expensive compared to alternatives",
+    bestFor: "General-purpose enterprise use, complex tasks" },
+  { name: 'GPT-4 Turbo', provider: 'OpenAI', category: "Flagship", contextWindow: "128K", price: '$10/$30',
+    pros: "OpenAI's top model, excellent reasoning and tool use capabilities",
+    cons: "Very expensive, rate limits, complex pricing",
+    bestFor: "Enterprise applications, complex reasoning, tool integration" },
+  { name: 'GPT-4o', provider: 'OpenAI', category: "Flagship", contextWindow: "128K", price: '$5/$15',
+    pros: "Omni model with excellent vision and audio capabilities",
+    cons: "Expensive for high-volume, complex pricing structure",
+    bestFor: "Multimodal applications, vision + text tasks" },
+  { name: 'GPT-3.5 Turbo', provider: 'OpenAI', category: "Budget", contextWindow: "16K", price: '$0.50/$1.50',
+    pros: "Inexpensive, fast, good for simple tasks",
+    cons: "Weaker reasoning, limited context, less capable",
+    bestFor: "High-volume simple tasks, cost-sensitive applications" },
+  { name: 'DeepSeek Chat', provider: 'DeepSeek', category: "Budget", contextWindow: "128K", price: '$0.14/$0.28',
+    pros: "Chat-focused, great value, similar to V3.2 for dialogue",
+    cons: "Rate limits, less specialized than V3.2",
+    bestFor: "Conversational AI on a budget" },
+  { name: 'Qwen 2.5', provider: 'Alibaba', category: "Budget", contextWindow: "128K", price: '$0.07/$0.14',
+    pros: "Extremely low cost, good performance for simple tasks",
+    cons: "Less capable for complex reasoning",
+    bestFor: "Simple chatbots, high-volume low-complexity tasks" },
+  { name: 'CodeLlama 70B', provider: 'Meta', category: "Specialized Coding", contextWindow: "128K", price: 'Open Source',
+    pros: "Meta's code-specialized model, fully open-source, large parameter count",
+    cons: "Requires significant resources to run, slower inference",
+    bestFor: "Self-hosted code generation, research on code models" },
+  { name: 'StarCoder 2', provider: 'BigCode', category: "Specialized Coding", contextWindow: "16K", price: 'Open Source',
+    pros: "Open-source code model trained on 300+ languages, well-documented",
+    cons: "Smaller context window, less capable overall",
+    bestFor: "Open-source code projects, language-specific tasks" },
+  { name: 'WizardMath', provider: 'Microsoft', category: "Reasoning Focus", contextWindow: "8K", price: 'Open Source',
+    pros: "Math-specialized open-source model, excellent for arithmetic",
+    cons: "Very small context window, limited to math-focused tasks",
+    bestFor: "Mathematical computations, educational applications" },
+  { name: 'Llama 3.1 Instruct', provider: 'Meta', category: "Conversational", contextWindow: "128K", price: 'Open Source',
+    pros: "Meta's instruction-tuned model, excellent for chat, fully open-source",
+    cons: "Less polished than commercial alternatives",
+    bestFor: "Self-hosted chatbots, open-source projects" },
+  { name: 'Gemma 2', provider: 'Google', category: "Conversational", contextWindow: "128K", price: 'Open Source',
+    pros: "Google's lightweight open-source model, efficient inference",
+    cons: "Less capable than larger models",
+    bestFor: "Edge deployment, efficient open-source chat" },
+  { name: 'Command R+', provider: 'Cohere', category: "Flagship", contextWindow: "128K", price: '$0.50/$2.00',
+    pros: "Enterprise-focused, excellent RAG capabilities, strong retrieval",
+    cons: "Less brand recognition, requires Cohere ecosystem",
+    bestFor: "Enterprise RAG, document retrieval, knowledge management" },
+  { name: 'Azure AI', provider: 'Microsoft', category: "Flagship", contextWindow: "128K", price: 'Varies',
+    pros: "Enterprise deployment with Microsoft integration, compliance-ready",
+    cons: "Complex pricing, requires Azure ecosystem",
+    bestFor: "Microsoft enterprise environments, compliance-heavy industries" },
+  { name: 'Amazon Titan', provider: 'AWS', category: "Flagship", contextWindow: "128K", price: 'Varies',
+    pros: "AWS's integrated AI service, seamless S3/EC2 integration",
+    cons: "AWS-specific pricing, vendor lock-in concerns",
+    bestFor: "AWS-native applications, AWS ecosystem projects" },
 ]
 
 function Tooltip({ text, children }) {
@@ -204,7 +230,6 @@ function Tooltip({ text, children }) {
 
 function ComparisonSection({ models }) {
   const [selectedModelId, setSelectedModelId] = useState(models[0]?.id || null)
-  
   const selectedModel = models.find(m => m.id === Number(selectedModelId)) || models[0]
   
   const calculatePercentage = (model, selected, metric) => {
@@ -221,18 +246,16 @@ function ComparisonSection({ models }) {
     return 'negative-diff'
   }
   
-  const getCategoryColor = (category) => {
-    return categoryOptions[category]?.color || '#888'
-  }
+  const getCategoryColor = (category) => categoryOptions[category]?.color || '#888'
   
   return (
     <div className="table-section">
       <h2>📊 Model Comparison (% of Baseline)</h2>
-      <p className="table-description">Select a model as baseline. All other models show their performance as a percentage of this baseline (100% = same performance).</p>
+      <p className="table-description">Select a baseline model. All other models show their performance as a percentage of this baseline (100% = same performance).</p>
       
-      <div className="comparison-selector" style={{ padding: '0 15px' }}>
+      <div className="comparison-selector" style={{ padding: '0 15px', marginBottom: '20px' }}>
         <label>
-          <strong>Select baseline model:</strong>
+          <strong>Baseline:</strong>
           <select 
             value={selectedModelId || ''}
             onChange={(e) => setSelectedModelId(Number(e.target.value))}
@@ -249,12 +272,9 @@ function ComparisonSection({ models }) {
             }}
           >
             {models.map(model => (
-              <option key={model.id} value={model.id} style={{ fontWeight: '600', color: '#1a1a2e' }}>
-                {model.name}
-              </option>
+              <option key={model.id} value={model.id}>{model.name}</option>
             ))}
           </select>
-          <span className="comparison-badge">Baseline: {selectedModel?.name}</span>
         </label>
       </div>
       
@@ -267,77 +287,46 @@ function ComparisonSection({ models }) {
               <th><Tooltip text={benchmarkDescriptions.HellaSwag}>HellaSwag</Tooltip></th>
               <th><Tooltip text={benchmarkDescriptions.HumanEval}>HumanEval</Tooltip></th>
               <th><Tooltip text={benchmarkDescriptions.GPQA}>GPQA</Tooltip></th>
-              <th><Tooltip text="Maximum number of tokens the model can process in a single request">Context</Tooltip></th>
-              <th>Category</th>
-              <th>Cost</th>
+              <th><Tooltip text="Token context window">Ctx</Tooltip></th>
+              <th><Tooltip text="Category tier">Cat</Tooltip></th>
+              <th><Tooltip text={costExplanation}>Cost</Tooltip></th>
             </tr>
           </thead>
           <tbody>
             {models.map(model => {
               const isSelected = model.id === selectedModel.id
-              const categoryColor = getCategoryColor(model.category)
-              
               return (
                 <tr key={model.id} style={{ background: isSelected ? 'rgba(103, 126, 234, 0.15)' : undefined }}>
                   <td>
                     <strong>{model.name}</strong>
-                    {model.free && <span style={{ marginLeft: '8px', background: '#11998e', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>FREE</span>}
-                    {model.openSource && <span style={{ marginLeft: '8px', background: '#9b59b6', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>OPEN SOURCE</span>}
+                    {model.free && <span style={{ marginLeft: '6px', background: '#11998e', color: 'white', padding: '1px 5px', borderRadius: '6px', fontSize: '0.7em' }}>FREE</span>}
+                    {model.openSource && <span style={{ marginLeft: '6px', background: '#9b59b6', color: 'white', padding: '1px 5px', borderRadius: '6px', fontSize: '0.7em' }}>OSS</span>}
                   </td>
                   <td>
-                    <span style={{ fontWeight: isSelected ? '600' : '400', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
-                      {model.mmlu}%
-                    </span>
-                    {!isSelected && <span className={getPctClass((model.mmlu / selectedModel.mmlu) * 100)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{((model.mmlu / selectedModel.mmlu) * 100).toFixed(0)}%</span>}
+                    <span>{model.mmlu}%</span>
+                    {!isSelected && <span className={getPctClass((model.mmlu / selectedModel.mmlu) * 100)} style={{ marginLeft: '6px', fontSize: '0.8em', fontWeight: '600' }}>{((model.mmlu / selectedModel.mmlu) * 100).toFixed(0)}%</span>}
                   </td>
                   <td>
-                    <span style={{ fontWeight: isSelected ? '600' : '400', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
-                      {model.hellaswag}%
-                    </span>
-                    {!isSelected && <span className={getPctClass((model.hellaswag / selectedModel.hellaswag) * 100)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{((model.hellaswag / selectedModel.hellaswag) * 100).toFixed(0)}%</span>}
+                    <span>{model.hellaswag}%</span>
+                    {!isSelected && <span className={getPctClass((model.hellaswag / selectedModel.hellaswag) * 100)} style={{ marginLeft: '6px', fontSize: '0.8em', fontWeight: '600' }}>{((model.hellaswag / selectedModel.hellaswag) * 100).toFixed(0)}%</span>}
                   </td>
                   <td>
-                    <span style={{ fontWeight: isSelected ? '600' : '400', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
-                      {model.humaneval}%
-                    </span>
-                    {!isSelected && <span className={getPctClass((model.humaneval / selectedModel.humaneval) * 100)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{((model.humaneval / selectedModel.humaneval) * 100).toFixed(0)}%</span>}
+                    <span>{model.humaneval}%</span>
+                    {!isSelected && <span className={getPctClass((model.humaneval / selectedModel.humaneval) * 100)} style={{ marginLeft: '6px', fontSize: '0.8em', fontWeight: '600' }}>{((model.humaneval / selectedModel.humaneval) * 100).toFixed(0)}%</span>}
                   </td>
                   <td>
-                    <span style={{ fontWeight: isSelected ? '600' : '400', color: isSelected ? '#e0e0e0' : '#c0c0c0' }}>
-                      {model.gpqa}%
-                    </span>
-                    {!isSelected && <span className={getPctClass((model.gpqa / selectedModel.gpqa) * 100)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{((model.gpqa / selectedModel.gpqa) * 100).toFixed(0)}%</span>}
+                    <span>{model.gpqa}%</span>
+                    {!isSelected && <span className={getPctClass((model.gpqa / selectedModel.gpqa) * 100)} style={{ marginLeft: '6px', fontSize: '0.8em', fontWeight: '600' }}>{((model.gpqa / selectedModel.gpqa) * 100).toFixed(0)}%</span>}
                   </td>
-                  <td style={{ fontWeight: '500', color: '#f1c40f' }}>
-                    {model.contextWindow}
-                  </td>
-                  <td>
-                    <span style={{ 
-                      background: categoryColor, 
-                      color: 'white', 
-                      padding: '2px 8px', 
-                      borderRadius: '8px', 
-                      fontSize: '0.75em',
-                      fontWeight: '600'
-                    }}>
-                      {model.category}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={model.free ? 'best-value' : ''} style={{ fontWeight: '600' }}>
-                      {model.free ? 'FREE' : `$${model.inputCost.toFixed(2)}/$${model.outputCost.toFixed(2)}`}
-                    </span>
-                  </td>
+                  <td style={{ color: '#f1c40f', fontWeight: '500' }}>{model.contextWindow}</td>
+                  <td><span style={{ background: getCategoryColor(model.category), color: 'white', padding: '2px 6px', borderRadius: '6px', fontSize: '0.7em', fontWeight: '600' }}>{model.category}</span></td>
+                  <td style={{ fontWeight: '600' }}>{model.free ? 'FREE' : `$${model.inputCost.toFixed(2)}/$${model.outputCost.toFixed(2)}`}</td>
                 </tr>
               )
             })}
           </tbody>
         </table>
       </div>
-      
-      <p className="table-description" style={{ marginTop: '15px', fontSize: '0.85em' }}>
-        💡 How to read: If baseline has 80% MMLU and another model shows 95%, that model achieves 95% of the baseline's performance.
-      </p>
     </div>
   )
 }
@@ -356,65 +345,37 @@ function CostBreakdownTable({ models }) {
   
   return (
     <div className="table-section">
-      <h2>💰 Cost Breakdown by Task</h2>
-      <p className="table-description">Shows absolute cost for each model across different task types.</p>
+      <h2>💰 Cost by Task Type</h2>
+      <p className="table-description">Estimated costs for different task types.</p>
       
       <div className="comparison-selector" style={{ padding: '0 15px', marginBottom: '15px' }}>
-        {Object.entries(categoryOptions).map(([cat, info]) => (
-          <span key={cat} style={{ marginRight: '15px', fontSize: '0.85em' }}>
-            <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', background: info.color, marginRight: '5px' }}></span>
-            {cat}
-          </span>
-        ))}
+        <span style={{ fontSize: '0.9em', color: '#aaa' }}>
+          Baseline: <strong style={{ color: '#e0e0e0' }}>{selectedModel?.name}</strong>
+        </span>
       </div>
       
       <div className="table-container">
         <table className="model-table">
           <thead>
             <tr>
-              <th style={{ width: '16%' }}>Model</th>
-              <th style={{ width: '10%' }}><Tooltip text="Maximum number of tokens the model can process">Context</Tooltip></th>
-              <th style={{ width: '10%' }}>Category</th>
+              <th style={{ width: '18%' }}>Model</th>
+              <th style={{ width: '10%' }}>Cat</th>
               {Object.keys(taskEstimates).map(task => (
-                <th key={task} style={{ width: '12%' }}>
-                  <Tooltip text={`Average tokens for ${task}: ${taskEstimates[task].input + taskEstimates[task].output} tokens`}>
-                    {task}
-                  </Tooltip>
-                </th>
+                <th key={task} style={{ width: '14%' }}>{task}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {models.map(model => {
-              const categoryColor = getCategoryColor(model.category)
-              
-              return (
-                <tr key={model.id}>
-                  <td>
-                    <strong>{model.name}</strong>
-                    {model.free && <span style={{ marginLeft: '8px', background: '#11998e', color: 'white', padding: '1px 6px', borderRadius: '8px', fontSize: '0.75em' }}>FREE</span>}
-                  </td>
-                  <td style={{ fontWeight: '500', color: '#f1c40f' }}>{model.contextWindow}</td>
-                  <td>
-                    <span style={{ background: categoryColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
-                      {model.category}
-                    </span>
-                  </td>
-                  {Object.keys(taskEstimates).map(task => {
-                    const { cost, free } = calculateTaskCost(model, task)
-                    return (
-                      <td key={task}>
-                        {free ? (
-                          <span className="best-value" style={{ fontWeight: '600' }}>FREE</span>
-                        ) : (
-                          <span style={{ fontWeight: '600', color: '#c0c0c0' }}>${cost.toFixed(4)}</span>
-                        )}
-                      </td>
-                    )
-                  })}
-                </tr>
-              )
-            })}
+            {models.map(model => (
+              <tr key={model.id}>
+                <td><strong>{model.name}</strong></td>
+                <td><span style={{ background: getCategoryColor(model.category), color: 'white', padding: '2px 6px', borderRadius: '6px', fontSize: '0.7em' }}>{model.category}</span></td>
+                {Object.keys(taskEstimates).map(task => {
+                  const { cost, free } = calculateTaskCost(model, task)
+                  return <td key={task}>{free ? <span className="best-value">FREE</span> : `$${cost.toFixed(4)}`}</td>
+                })}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -428,37 +389,33 @@ function NotableMentions() {
   return (
     <div className="table-section">
       <h2>⭐ Notable Mentions (Disabled Models)</h2>
-      <p className="table-description">Other relevant models worth considering but not currently enabled in the comparison. Grayed out = not active.</p>
+      <p className="table-description">Other relevant models worth considering. Grayed out = not enabled in comparison.</p>
       
-      <div className="table-container" style={{ opacity: 0.8 }}>
-        <table className="model-table">
+      <div className="table-container" style={{ opacity: 0.75 }}>
+        <table className="model-table qualitative-table">
           <thead>
             <tr>
-              <th style={{ width: '22%' }}>Model</th>
-              <th style={{ width: '12%' }}>Provider</th>
-              <th style={{ width: '12%' }}>Category</th>
-              <th style={{ width: '12%' }}>Price</th>
-              <th style={{ width: '42%' }}>Why Consider</th>
+              <th style={{ width: '18%' }}>Model</th>
+              <th style={{ width: '8%' }}>Cat</th>
+              <th style={{ width: '8%' }}>Ctx</th>
+              <th style={{ width: '8%' }}>Price</th>
+              <th style={{ width: '22%' }}>✅ Pros</th>
+              <th style={{ width: '22%' }}>❌ Cons</th>
+              <th style={{ width: '22%' }}>🎯 Best For</th>
             </tr>
           </thead>
           <tbody>
-            {notableModels.map((model, index) => {
-              const categoryColor = getCategoryColor(model.category)
-              
-              return (
-                <tr key={index} style={{ opacity: 0.5 }}>
-                  <td><strong>{model.name}</strong></td>
-                  <td>{model.provider}</td>
-                  <td>
-                    <span style={{ background: categoryColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
-                      {model.category}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: '0.85em', color: '#aaa' }}>{model.price}</td>
-                  <td style={{ fontSize: '0.85em' }}>{model.reason}</td>
-                </tr>
-              )
-            })}
+            {notableModels.map((model, index) => (
+              <tr key={index} style={{ opacity: 0.5 }}>
+                <td><strong>{model.name}</strong><br/><span style={{ fontSize: '0.8em', color: '#888' }}>{model.provider}</span></td>
+                <td><span style={{ background: getCategoryColor(model.category), color: 'white', padding: '2px 6px', borderRadius: '6px', fontSize: '0.7em' }}>{model.category}</span></td>
+                <td style={{ color: '#f1c40f', fontSize: '0.85em' }}>{model.contextWindow}</td>
+                <td style={{ fontSize: '0.85em', color: '#aaa' }}>{model.price}</td>
+                <td style={{ fontSize: '0.85em' }}>{model.pros}</td>
+                <td style={{ fontSize: '0.85em' }}>{model.cons}</td>
+                <td style={{ fontSize: '0.85em' }}>{model.bestFor}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -482,9 +439,7 @@ function App() {
     result.sort((a, b) => {
       let aVal = a[sortBy]
       let bVal = b[sortBy]
-      if (sortBy === 'name') {
-        return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal)
-      }
+      if (sortBy === 'name') return sortOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal)
       return sortOrder === 'asc' ? aVal - bVal : bVal - aVal
     })
 
@@ -499,12 +454,8 @@ function App() {
   }), [filteredModels])
 
   const handleSort = (column) => {
-    if (sortBy === column) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
-    } else {
-      setSortBy(column)
-      setSortOrder('desc')
-    }
+    if (sortBy === column) setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    else { setSortBy(column); setSortOrder('desc') }
   }
 
   const getCategoryColor = (category) => categoryOptions[category]?.color || '#888'
@@ -517,104 +468,28 @@ function App() {
       </header>
 
       <div className="stats-grid">
-        <div className="stat-card">
-          <h3>{totals.models}</h3>
-          <p>Models Compared</p>
-        </div>
-        <div className="stat-card">
-          <h3>{totals.freeModels}</h3>
-          <p>Free Options</p>
-        </div>
-        <div className="stat-card">
-          <h3>{totals.openSourceModels}</h3>
-          <p>Open Source</p>
-        </div>
-        <div className="stat-card">
-          <h3>{totals.avgMmlu}%</h3>
-          <p>Avg MMLU Score</p>
-        </div>
+        <div className="stat-card"><h3>{totals.models}</h3><p>Models</p></div>
+        <div className="stat-card"><h3>{totals.freeModels}</h3><p>Free</p></div>
+        <div className="stat-card"><h3>{totals.openSourceModels}</h3><p>Open Source</p></div>
+        <div className="stat-card"><h3>{totals.avgMmlu}%</h3><p>Avg MMLU</p></div>
       </div>
 
       <div className="filters">
         <div className="filter-group">
-          <label>🔍 Search Models</label>
-          <input 
-            type="text" 
-            placeholder="Type to search..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <label>🔍 Search</label>
+          <input type="text" placeholder="Search models..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         </div>
-        
         <div className="filter-group">
-          <label>
-            <input 
-              type="checkbox" 
-              checked={filterFree}
-              onChange={(e) => setFilterFree(e.target.checked)}
-              style={{ marginRight: '10px' }}
-            />
-            Show Free & Open Source Only
-          </label>
+          <label><input type="checkbox" checked={filterFree} onChange={(e) => setFilterFree(e.target.checked)} style={{ marginRight: '10px' }}/>Free & Open Source Only</label>
         </div>
       </div>
 
       <ComparisonSection models={filteredModels} />
       <CostBreakdownTable models={filteredModels} />
-
-      <div className="table-section">
-        <h2>📈 Performance Metrics & Costs</h2>
-        <p className="table-description">Click any column header to sort.</p>
-        
-        <div className="table-container">
-          <table className="model-table">
-            <thead>
-              <tr>
-                <th onClick={() => handleSort('name')}>Model {sortBy === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}</th>
-                <th onClick={() => handleSort('mmlu')}>MMLU {sortBy === 'mmlu' && (sortOrder === 'asc' ? '↑' : '↓')}</th>
-                <th onClick={() => handleSort('hellaswag')}>HellaSwag {sortBy === 'hellaswag' && (sortOrder === 'asc' ? '↑' : '↓')}</th>
-                <th onClick={() => handleSort('humaneval')}>HumanEval {sortBy === 'humaneval' && (sortOrder === 'asc' ? '↑' : '↓')}</th>
-                <th onClick={() => handleSort('gpqa')}>GPQA {sortBy === 'gpqa' && (sortOrder === 'asc' ? '↑' : '↓')}</th>
-                <th><Tooltip text="Maximum number of tokens the model can process">Context</Tooltip></th>
-                <th>Category</th>
-                <th>Input ($/M)</th>
-                <th>Output ($/M)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredModels.map(model => {
-                const categoryColor = getCategoryColor(model.category)
-                return (
-                  <tr key={model.id}>
-                    <td>
-                      <strong>{model.name}</strong>
-                      {model.free && <span style={{ marginLeft: '10px', background: '#11998e', color: 'white', padding: '2px 8px', borderRadius: '10px', fontSize: '0.8em' }}>FREE</span>}
-                      {model.openSource && <span style={{ marginLeft: '10px', background: '#9b59b6', color: 'white', padding: '2px 8px', borderRadius: '10px', fontSize: '0.8em' }}>OPEN SOURCE</span>}
-                    </td>
-                    <td>{model.mmlu}%</td>
-                    <td>{model.hellaswag}%</td>
-                    <td>{model.humaneval}%</td>
-                    <td>{model.gpqa}%</td>
-                    <td style={{ fontWeight: '500', color: '#f1c40f' }}>{model.contextWindow}</td>
-                    <td>
-                      <span style={{ background: categoryColor, color: 'white', padding: '2px 8px', borderRadius: '8px', fontSize: '0.75em', fontWeight: '600' }}>
-                        {model.category}
-                      </span>
-                    </td>
-                    <td>${model.inputCost.toFixed(3)}</td>
-                    <td>${model.outputCost.toFixed(2)}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
       <NotableMentions />
 
       <footer className="footer">
-        <p>Built with React + Vite | <a href="https://github.com/mloren13/llm-comparison-webapp" target="_blank" rel="noopener noreferrer">View on GitHub</a></p>
+        <p>Built with React + Vite | <a href="https://github.com/mloren13/llm-comparison-webapp" target="_blank">View on GitHub</a></p>
       </footer>
     </div>
   )
