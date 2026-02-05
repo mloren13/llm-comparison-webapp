@@ -130,6 +130,7 @@
 /* Table Sections */
 .table-section {
   margin-bottom: 40px;
+  position: relative;
 }
 
 .table-section h2 {
@@ -216,37 +217,36 @@
 }
 
 /* Tooltip Styles - FIXED */
-.tooltip-container {
+.tooltip-trigger {
   position: relative;
-  display: inline-block;
-  border-bottom: 2px dotted #667eea;
+  display: inline;
   cursor: help;
 }
 
-.tooltip-text {
+.tooltip-content {
   visibility: hidden;
-  width: 320px;
-  max-width: 90vw;
+  width: 280px;
+  max-width: calc(100vw - 40px);
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: #ffffff;
   text-align: left;
   border-radius: 10px;
   padding: 12px 15px;
-  position: fixed;
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.3s ease;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
   border: 2px solid rgba(102, 126, 234, 0.6);
-  font-size: 0.9em;
+  font-size: 0.85em;
   font-weight: 500;
   line-height: 1.5;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  white-space: normal;
 }
 
-.tooltip-container:hover .tooltip-text {
+.tooltip-trigger:hover .tooltip-content,
+.tooltip-trigger:focus .tooltip-content {
   visibility: visible;
   opacity: 1;
 }
@@ -380,10 +380,10 @@
     font-size: 0.8em;
   }
   
-  .tooltip-text {
-    width: 280px;
-    max-width: 85vw;
-    font-size: 0.85em;
+  .tooltip-content {
+    width: 250px;
+    max-width: calc(100vw - 30px);
+    font-size: 0.8em;
     padding: 10px 12px;
   }
   

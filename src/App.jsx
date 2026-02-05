@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 // Benchmark descriptions
 const benchmarkDescriptions = {
@@ -109,10 +109,59 @@ const models = [
 ]
 
 function Tooltip({ text, children }) {
+  const [visible, setVisible] = useState(false)
+  const [position, setPosition] = useState({ top: 0, left: 0 })
+  const containerRef = useRef(null)
+
+  const showTooltip = (e) => {
+    if (!containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
+    const scrollY = window.scrollY
+    const scrollX = window.scrollX
+    
+    // Position tooltip above and to the right of the element
+    const top = rect.top + scrollY - 10
+    const left = rect.right + scrollX + 10
+    
+    // Adjust if tooltip goes off screen
+    const tooltipWidth = 300
+    if (left + tooltipWidth > window.innerWidth) {
+      setPosition({ top, left: rect.left + scrollX - tooltipWidth - 10 })
+    } else {
+      setPosition({ top, left })
+    }
+    
+    setVisible(true)
+  }
+
+  const hideTooltip = () => {
+    setVisible(false)
+  }
+
   return (
-    <span className="tooltip-container">
+    <span 
+      ref={containerRef}
+      className="tooltip-trigger"
+      onMouseEnter={showTooltip}
+      onMouseLeave={hideTooltip}
+      onFocus={showTooltip}
+      onBlur={hideTooltip}
+      style={{ borderBottom: '2px dotted #667eea', cursor: 'help' }}
+    >
       {children}
-      <span className="tooltip-text">{text}</span>
+      {visible && (
+        <div 
+          className="tooltip-content"
+          style={{ 
+            top: position.top, 
+            left: position.left,
+            position: 'absolute',
+            zIndex: 9999
+          }}
+        >
+          {text}
+        </div>
+      )}
     </span>
   )
 }
@@ -143,12 +192,13 @@ function ComparisonSection({ models }) {
   const getCostPercentage = (model, selected, inputs, outputs) => {
     const cost1 = (inputs * model.inputCost / 1000000) + (outputs * model.outputCost / 1000000)
     const cost2 = (inputs * selected.inputCost / 1000000) + (outputs * selected.outputCost / 1000000)
-    if (cost2 === 0) return { value: cost1, pct: 0, label: model.free ? 'FREE' : 'N/A' }
+    const isFree = model.inputCost === 0 && model.outputCost === 0
+    if (cost2 === 0) return { value: cost1, pct: 0, label: isFree ? 'FREE' : 'N/A' }
     const pct = (cost1 / cost2) * 100
     return {
       value: cost1,
       pct: pct,
-      label: model.free ? 'FREE' : `${pct.toFixed(0)}%`
+      label: isFree ? 'FREE' : `${pct.toFixed(0)}%`
     }
   }
   
@@ -239,7 +289,7 @@ function ComparisonSection({ models }) {
                     {!isSelected && <span className={getPctClass(gpqa.pct)} style={{ marginLeft: '8px', fontSize: '0.85em', fontWeight: '600' }}>{gpqa.label}</span>}
                   </td>
                   <td>
-                    <span className={model.free ? 'best-value' : getPctClass(cost.pct)} style={{ fontWeight: '600' }}>
+                    <span className={model.inputCost === 0 ? 'best-value' : getPctClass(cost.pct)} style={{ fontWeight: '600' }}>
                       {cost.label}
                     </span>
                     {!isSelected && !model.free && <span style={{ marginLeft: '8px', fontSize: '0.85em', color: '#888' }}>${cost.value}</span>}
@@ -267,7 +317,7 @@ function CostBreakdownTable({ models }) {
     const task = taskEstimates[taskName]
     if (!task) return { cost: 0, pct: 0 }
     const cost = (task.input * model.inputCost / 1000000) + (task.output * model.outputCost / 1000000)
-    return { cost: cost, free: model.free }
+    return { cost: cost, free: model.inputCost === 0 && model.outputCost === 0 }
   }
   
   const calculatePercentage = (model, selected, taskName) => {
@@ -275,7 +325,7 @@ function CostBreakdownTable({ models }) {
     if (!task) return 0
     const cost1 = (task.input * model.inputCost / 1000000) + (task.output * model.outputCost / 1000000)
     const cost2 = (task.input * selected.inputCost / 1000000) + (task.output * selected.outputCost / 1000000)
-    if (cost2 === 0) return model.free ? 0 : 100
+    if (cost2 === 0) return model.inputCost === 0 ? 0 : 100
     return (cost1 / cost2) * 100
   }
   
@@ -550,6 +600,7 @@ function App() {
               {filteredModels.map(model => {
                 const cost = calculateCost(model, costScenario.input, costScenario.output)
                 const isBestValue = model.openSource || (model.mmlu > 75 && cost < 1)
+                const isFree = model.inputCost === 0 && model.outputCost === 0
                 
                 return (
                   <tr key={model.id}>
@@ -564,9 +615,13 @@ function App() {
                     <td>${model.inputCost.toFixed(3)}</td>
                     <td>${model.outputCost.toFixed(2)}</td>
                     <td>
-                      <span className={isBestValue ? 'best-value' : ''}>
-                        ${cost.toFixed(2)}
-                      </span>
+                      {isFree ? (
+                        <span className="best-value">FREE</span>
+                      ) : (
+                        <span className={isBestValue ? 'best-value' : ''}>
+                          ${cost.toFixed(2)}
+                        </span>
+                      )}
                     </td>
                   </tr>
                 )
