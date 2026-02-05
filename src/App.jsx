@@ -288,7 +288,6 @@ function ComparisonSection({ models }) {
     </div>
   )
 }
-}
 
 function App() {
   const [sortBy, setSortBy] = useState('mmlu')
