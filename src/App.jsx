@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react'
 // Benchmark descriptions
 const benchmarkDescriptions = {
   MMLU: "Massive Multitask Language Understanding - Tests knowledge across subjects like math, history, law, and medicine. Higher = smarter general knowledge.",
-  HellaSwag: "Tests commonsense reasoning - understanding what happens next in everyday situations. Like a "common sense" quiz for AI. Higher = better understanding of how the world works.",
+  HellaSwag: "Tests commonsense reasoning - understanding what happens next in everyday situations. Like a 'common sense' quiz for AI. Higher = better understanding of how the world works.",
   HumanEval: "Measures coding ability - can the AI write working code? Tests on real programming problems. Higher = better at writing code.",
   GPQA: "Graduate-Level Google-Proof Q&A - Very hard science questions (graduate level). Tests expert-level knowledge. Higher = more expert-level understanding."
 }
